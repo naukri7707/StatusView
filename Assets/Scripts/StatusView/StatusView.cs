@@ -22,18 +22,33 @@ public class StatusView : MonoBehaviour
     [SerializeField]
     private Material chartMaterial;
 
-    [SerializeField]
-    private float _scale = 1;
+    [SerializeField, HideInInspector]
+    private float _radius = 10;
 
-    public float Scale { get => _scale; set => _scale = value; }
+    public float Radius
+    {
+        get => _radius;
+        set
+        {
+            _radius = value;
+            OnResize?.Invoke();
+        }
+    }
 
-    [SerializeField]
-    private int offset = 50;
+    [SerializeField, HideInInspector]
+    private int _offset = 5;
 
-    public int Offset { get => offset; set => offset = value; }
+    public int Offset
+    {
+        get => _offset;
+        set
+        {
+            _offset = value;
+            OnResize?.Invoke();
+        }
+    }
 
-
-    [MinMaxSlider(0, 1000)]
+    [SerializeField, MinMaxSlider(0, 1000)]
     public Vector2Int Range = new Vector2Int(10, 100);
 
     private const BindingFlags BINDING_FLAGS = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic;
@@ -44,9 +59,14 @@ public class StatusView : MonoBehaviour
     public IEnumerable<(string name, int value, Action<int> setter)> UnityEditorOnly_Abilities;
 #endif
 
+    // [field: SerializeField]
     private int Count { get; set; }
 
     private float Angle { get; set; }
+
+    private RectTransform[] textTransforms;
+
+    public event Action OnResize;
 
     public void InitView<T>(T target)
     {
@@ -83,13 +103,11 @@ public class StatusView : MonoBehaviour
         {
             abilityNames[i] = name;
             abilityValueGetters[i] = Delegate.CreateDelegate(typeof(Func<T, int>), prop.GetGetMethod(true)) as Func<T, int>;
-            // 設置 Text
-            var text = Instantiate(AbilityText, transform);
-            text.GetComponent<RectTransform>().anchoredPosition = GetVeticesPos(Range.y + Offset, i * Angle);
-            text.text = name;
         }
-        SetBackgroundMesh();
-        UpdateStatus();
+        OnResize += SetBackgroundMesh;
+        OnResize += UpdateStatus;
+        OnResize += SetAbilityText;
+        OnResize();
 #if UNITY_EDITOR
         var abilityValueSetters = new Action<T, int>[Count];
         foreach (var (i, (name, prop)) in sortedAbilities.Values.WithIndex())
@@ -110,16 +128,38 @@ public class StatusView : MonoBehaviour
             }
         }
 #endif
+        void SetAbilityText()
+        {
+            if (textTransforms is null)
+            {
+                var tmp = new List<RectTransform>();
+                foreach (var (i, name) in abilityNames.WithIndex())
+                {
+                    var text = Instantiate(AbilityText, transform);
+                    text.text = name;
+                    var trans = text.GetComponent<RectTransform>();
+                    trans.anchoredPosition = GetVeticesPos(Radius + Offset, i * Angle);
+                    tmp.Add(trans);
+                }
+                textTransforms = tmp.ToArray();
+            }
+            else
+            {
+                foreach (var (i, trans) in textTransforms.WithIndex())
+                {
+                    trans.anchoredPosition = GetVeticesPos(Radius + Offset, i * Angle);
+                }
+            }
+        }
         void SetBackgroundMesh()
         {
             var mesh = new Mesh();
-            float radius = Range.y;
-            var bVertices = new Vector3[361];
+            var vertices = new Vector3[361];
             for (int i = 1; i <= 360; i++)
             {
-                bVertices[i] = GetVeticesPos(radius, i);
+                vertices[i] = GetVeticesPos(Radius, i);
             }
-            mesh.vertices = bVertices;
+            mesh.vertices = vertices;
 
             var triangles = new int[360 * 3];
             for (int i = 0; i < 360; i++)
@@ -151,7 +191,7 @@ public class StatusView : MonoBehaviour
         var vertices = new Vector3[Count + 1];
         foreach (var (i, v) in AbilityValues.WithIndex())
         {
-            vertices[i + 1] = GetVeticesPos(v, i * Angle);
+            vertices[i + 1] = GetVeticesPos(Radius * v / Range.y, i * Angle);
         }
         mesh.vertices = vertices;
 
@@ -172,7 +212,7 @@ public class StatusView : MonoBehaviour
 
     Vector2 GetVeticesPos(float value, float angle)
     {
-        value *= Scale;
+        value *= Radius;
         if (angle == 0)
         {
             return new Vector2(0, value);

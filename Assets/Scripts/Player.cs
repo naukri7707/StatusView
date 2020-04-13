@@ -5,19 +5,19 @@ using UnityEngine;
 public class Player : MonoBehaviour
 {
     [Ability("STR")]
-    public int Str { get; set; }
+    public int Str { get; set; } = 57;
 
     [Ability("VIT", 1)]
-    public int Vit { get; set; }
+    public int Vit { get; set; } = 63;
 
     [Ability("LUK", 9999)]
-    public int Luk { get; set; }
+    public int Luk { get; set; } = 45;
 
     [Ability("INT", 3)]
-    public int Int { get; set; }
+    public int Int { get; set; } = 71;
 
     [Ability("DEX")]
-    public int Dex { get; set; }
+    public int Dex { get; set; } = 31;
 
     [SerializeField]
     private StatusView statusView;

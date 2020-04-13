@@ -623,5 +623,35 @@ PrefabInstance:
       propertyPath: m_Name
       value: StatusView
       objectReference: {fileID: 0}
+    - target: {fileID: 7347301903795935707, guid: eba2aae7cd8867a438f2f8872821d4d4,
+        type: 3}
+      propertyPath: _scale
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7347301903795935707, guid: eba2aae7cd8867a438f2f8872821d4d4,
+        type: 3}
+      propertyPath: <aa>k__BackingField
+      value: 18
+      objectReference: {fileID: 0}
+    - target: {fileID: 7347301903795935707, guid: eba2aae7cd8867a438f2f8872821d4d4,
+        type: 3}
+      propertyPath: Range.y
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 7347301903795935707, guid: eba2aae7cd8867a438f2f8872821d4d4,
+        type: 3}
+      propertyPath: _offset
+      value: 50
+      objectReference: {fileID: 0}
+    - target: {fileID: 7347301903795935707, guid: eba2aae7cd8867a438f2f8872821d4d4,
+        type: 3}
+      propertyPath: Range.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7347301903795935707, guid: eba2aae7cd8867a438f2f8872821d4d4,
+        type: 3}
+      propertyPath: _radius
+      value: 100
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: eba2aae7cd8867a438f2f8872821d4d4, type: 3}
